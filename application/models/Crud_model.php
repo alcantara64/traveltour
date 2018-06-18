@@ -24,5 +24,8 @@ class Crud_model extends CI_Model {
 
 		return array_reverse($query->result_array());
 	}
+	function get_type_name_by_id($para ="",$para2 =""){
+
+	}
 
 }

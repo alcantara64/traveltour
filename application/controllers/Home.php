@@ -11,6 +11,7 @@ class Home extends CI_Controller {
 	    {
 	        parent::__construct();
 					$cache_time = 300;
+				
 
 
 }
@@ -238,5 +239,95 @@ function login($para1 = "", $para2 = "")
 			}
         }
 		//$this->load->view('front/index', $page_data);
+    }
+
+    function profile($para1="",$para2="")
+    {
+        
+        if($para1=="info"){
+            $page_data['user_info']     = $this->db->get_where('users',array('user_id'=>$this->session->userdata('user_id')))->result_array();
+            $this->load->view('front/user/dashboard',$page_data);
+        }
+        elseif($para1=="profile"){
+        	$page_data['title'] = "Profile";
+        	 $page_data['user_info']     = $this->db->get_where('users',array('user_id'=>1))->result_array();
+            $this->load->view('front/user/profile',$page_data);
+           
+        }
+        elseif($para1=="tickets"){
+            $this->load->view('front/user/tickets');
+        }
+        elseif($para1=="history"){
+            $this->load->view('front/user/history');
+        }
+      
+        elseif($para1=="dispute"){
+            $page_data['user_info']     = $this->db->get_where('abitrations',array('buyer'=>$this->session->userdata('user_id')))->result_array();
+            $this->load->view('front/user/disputes',$page_data);
+        }
+        
+        elseif($para1=="transaction"){
+            $this->load->view('front/user/transaction');
+        }
+        elseif($para1=="ticket"){
+            $this->load->view('front/user/ticket');
+        }
+	        elseif($para1=="message_box"){
+			$page_data['ticket']  = $para2;
+			$this->crud_model->ticket_message_viewed($para2,'user');
+            $this->load->view('front/user/message_box',$page_data);
+        }
+        elseif($para1=="message_view"){
+			$page_data['ticket']  = $para2;
+			$page_data['message_data'] = $this->db->get_where('ticket', array(
+				'ticket_id' => $para2
+			))->result_array();
+			$this->crud_model->ticket_message_viewed($para2,'user');
+            $this->load->view('front/user/message_view',$page_data);
+        }
+        elseif($para1=="order_tracing"){
+			$sale_data = $this->db->get_where('sale', array(
+				'sale_code' => $this->input->post('sale_code')
+			));
+			if($sale_data->num_rows() >= 1){
+				$page_data['status'] = 'done';
+				$page_data['sale_datetime'] = $sale_data->row()->sale_datetime;
+				$page_data['delivery_status'] = json_decode($sale_data->row()->delivery_status,true);
+			} else {
+				$page_data['status'] = '';
+			}
+			$this->load->view('front/user/order_tracing',$page_data);
+        } else {			
+			$page_data['part']     = 'info';
+			if($para2=="info"){
+				$page_data['part']     = 'info';
+			}
+			elseif($para2=="wishlist"){
+				$page_data['part']     = 'wishlist';
+			}
+			elseif($para2=="order_history"){
+				$page_data['part']     = 'order_history';
+			}
+			elseif($para2=="downloads"){
+				$page_data['part']     = 'downloads';
+			}
+			elseif($para2=="update_profile"){
+				$page_data['part']     = 'update_profile';
+			}
+			elseif($para2=="ticket"){
+				$page_data['part']     = 'ticket';
+			}
+            $page_data['user_info']     = $this->db->get_where('users',array('user_id'=>$this->session->userdata('user_id')))->result_array();
+            $page_data['page_name']     = "user";
+            $page_data['asset_page']    = "user_profile";
+            //$page_data['page_title']    = translate('my_profile');
+            $this->load->view('front/user/dashboard',$page_data);
+        }
+        /*$page_data['all_products'] = $this->db->get_where('user', array(
+            'user_id' => $this->session->userdata('user_id')
+        ))->result_array();
+        $page_data['user_info']    = $this->db->get_where('user', array(
+            'user_id' => $this->session->userdata('user_id')
+        ))->result_array();*/
     }
 	}
