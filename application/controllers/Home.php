@@ -50,9 +50,7 @@ class Home extends CI_Controller {
 	 }
 	 function vendor_logup($para1 = "", $para2 = "")
     {
-		if($this->crud_model->get_settings_value('general_settings','captcha_status','value') == 'ok'){
-			$this->load->library('recaptcha');
-		}
+		
         $this->load->library('form_validation');
         if ($para1 == "add_info") {
         	$msg = '';
@@ -258,17 +256,10 @@ function login($para1 = "", $para2 = "")
             $this->load->view('front/user/tickets');
         }
         elseif($para1=="history"){
-            $this->load->view('front/user/history');
+        	 $page_data['user_info']     = $this->db->get_where('subscription',array('user_id'=>1))->result_array();
+            $this->load->view('front/user/history',$page_data);
         }
       
-        elseif($para1=="dispute"){
-            $page_data['user_info']     = $this->db->get_where('abitrations',array('buyer'=>$this->session->userdata('user_id')))->result_array();
-            $this->load->view('front/user/disputes',$page_data);
-        }
-        
-        elseif($para1=="transaction"){
-            $this->load->view('front/user/transaction');
-        }
         elseif($para1=="ticket"){
             $this->load->view('front/user/ticket');
         }
@@ -285,31 +276,19 @@ function login($para1 = "", $para2 = "")
 			$this->crud_model->ticket_message_viewed($para2,'user');
             $this->load->view('front/user/message_view',$page_data);
         }
-        elseif($para1=="order_tracing"){
-			$sale_data = $this->db->get_where('sale', array(
-				'sale_code' => $this->input->post('sale_code')
-			));
-			if($sale_data->num_rows() >= 1){
-				$page_data['status'] = 'done';
-				$page_data['sale_datetime'] = $sale_data->row()->sale_datetime;
-				$page_data['delivery_status'] = json_decode($sale_data->row()->delivery_status,true);
-			} else {
-				$page_data['status'] = '';
-			}
-			$this->load->view('front/user/order_tracing',$page_data);
-        } else {			
-			$page_data['part']     = 'info';
+        else {			
+			$page_data['info']     = 'info';
 			if($para2=="info"){
 				$page_data['part']     = 'info';
 			}
-			elseif($para2=="wishlist"){
+			elseif($para2=="profile"){
 				$page_data['part']     = 'wishlist';
 			}
-			elseif($para2=="order_history"){
-				$page_data['part']     = 'order_history';
+			elseif($para2=="tickets"){
+				$page_data['tickets']     = 'tickets';
 			}
-			elseif($para2=="downloads"){
-				$page_data['part']     = 'downloads';
+			elseif($para2=="history"){
+				$page_data['history']     = 'history';
 			}
 			elseif($para2=="update_profile"){
 				$page_data['part']     = 'update_profile';
@@ -330,4 +309,161 @@ function login($para1 = "", $para2 = "")
             'user_id' => $this->session->userdata('user_id')
         ))->result_array();*/
     }
+    function registration($para1 = "", $para2 = "")
+    {
+        $safe = 'yes';
+        $char = '';
+        foreach($_POST as $k=>$row){
+            if (preg_match('/[\'^":()}{#~><>|=¬]/', $row,$match))
+            {
+                if($k !== 'password1' && $k !== 'password2')
+                {
+                    $safe = 'no';
+                    $char = $match[0];
+                }
+            }
+        }
+		//if($this->crud_model->get_settings_value('general_settings','captcha_status','value') == 'ok'){
+			//$this->load->library('recaptcha');
+		//}
+        $this->load->library('form_validation');
+        $page_data['page_name'] = "registration";
+        if ($para1 == "add_info") {
+        	$msg = '';
+			$this->form_validation->set_rules('username', 'Your First Name', 'required');
+            $this->form_validation->set_rules('email', 'Email', 'required|is_unique[user.email]|valid_email',array('required' => 'You have not provided %s.', 'is_unique' => 'This %s already exists.'));
+            $this->form_validation->set_rules('password1', 'Password', 'required|matches[password2]');
+            $this->form_validation->set_rules('password2', 'Confirm Password', 'required');
+            $this->form_validation->set_rules('address1', 'Address Line 1', 'required');
+            $this->form_validation->set_rules('address2', 'Address Line 2', 'required');
+            $this->form_validation->set_rules('phone', 'Phone', 'required');
+            $this->form_validation->set_rules('surname', 'Your Last Name', 'required');
+            $this->form_validation->set_rules('zip', 'ZIP', 'required');
+            $this->form_validation->set_rules('city', 'City', 'required');
+            $this->form_validation->set_rules('state', 'State', 'required');
+            $this->form_validation->set_rules('country', 'Country', 'required');
+            $this->form_validation->set_rules('terms_check', 'Terms & Conditions', 'required', array('required' => translate('you_must_agree_with_terms_&_conditions')));
+
+            if ($this->form_validation->run() == FALSE)
+            {
+                echo validation_errors();
+            }
+            else
+            {
+                if($safe == 'yes'){
+					if($this->crud_model->get_settings_value('general_settings','captcha_status','value') == 'ok'){
+						$captcha_answer = $this->input->post('g-recaptcha-response');
+						$response = $this->recaptcha->verifyResponse($captcha_answer);
+						if ($response['success']) {
+							$data['username']      = $this->input->post('username');
+							$data['email']         = $this->input->post('email');
+							$data['address1']      = $this->input->post('address1');
+							$data['address2']      = $this->input->post('address2');
+							$data['phone']         = $this->input->post('phone');
+							$data['surname']       = $this->input->post('surname');
+							$data['zip']           = $this->input->post('zip');
+							$data['city']          = $this->input->post('city');
+							$data['state']          = $this->input->post('state');
+							$data['country']          = $this->input->post('country');
+							$data['langlat']       = '';
+							$data['wishlist']      = '[]';
+							$data['creation_date'] = time();
+							
+							if ($this->input->post('password1') == $this->input->post('password2')) {
+								$password         = $this->input->post('password1');
+								$data['password'] = sha1($password);
+								$this->db->insert('user', $data);
+								$msg = 'done';
+								if($this->email_model->account_opening('user', $data['email'], $password) == false){
+									$msg = 'done_but_not_sent';
+								}else{
+									$msg = 'done_and_sent';
+								}
+							}
+							echo $msg;
+						}else{
+							echo translate('please_fill_the_captcha');
+						}
+					}else{
+						$data['username']      = $this->input->post('username');
+						$data['email']         = $this->input->post('email');
+						$data['address1']      = $this->input->post('address1');
+						$data['address2']      = $this->input->post('address2');
+						$data['phone']         = $this->input->post('phone');
+						$data['surname']       = $this->input->post('surname');
+						$data['zip']           = $this->input->post('zip');
+						$data['city']          = $this->input->post('city');
+						$data['state']          = $this->input->post('state');
+						$data['country']          = $this->input->post('country');
+						$data['langlat']       = '';
+						$data['wishlist']      = '[]';
+						$data['creation_date'] = time();
+						
+						if ($this->input->post('password1') == $this->input->post('password2')) {
+							$password         = $this->input->post('password1');
+							$data['password'] = sha1($password);
+							$this->db->insert('user', $data);
+							$msg = 'done';
+							if($this->email_model->account_opening('user', $data['email'], $password) == false){
+								$msg = 'done_but_not_sent';
+							}else{
+								$msg = 'done_and_sent';
+							}
+						}
+						echo $msg;
+					}
+                } else {
+                    echo 'Disallowed charecter : " '.$char.' " in the POST';
+                }
+			}
+        }
+        else if ($para1 == "update_info") {
+            $id                  = 1;//$this->session->userdata('user_id');
+            $data['first_name']  = $this->input->post('first_name');
+            $data['last_name']   = $this->input->post('last_name');
+            $data['address_1']    = $this->input->post('Address');
+            $data['education']   = $this->input->post('education');
+            $data['phone']       = $this->input->post('phone');
+            $data['city']        = $this->input->post('city');
+			$data['state']       = $this->input->post('state');
+			$data['country']     = $this->input->post('country');
+           // $data['skype']       = $this->input->post('skype');
+            
+            
+            $this->db->where('user_id', $id);
+            $this->db->update('users', $data);
+            echo "done";
+       }
+        else if ($para1 == "update_password") {
+            $user_data['password'] = $this->input->post('password');
+            $account_data          = $this->db->get_where('user', array(
+                'user_id' => $this->session->userdata('user_id')
+            ))->result_array();
+            foreach ($account_data as $row) {
+                if (sha1($user_data['password']) == $row['password']) {
+                    if ($this->input->post('password1') == $this->input->post('password2')) {
+                        $data['password'] = sha1($this->input->post('password1'));
+                        $this->db->where('user_id', $this->session->userdata('user_id'));
+                        $this->db->update('user', $data);
+                        echo "done";
+                    } else {
+                        echo translate('passwords_did_not_match!');
+                    }
+                } else {
+                    echo translate('wrong_old_password!');
+                }
+            }
+
+        } 
+        else if ($para1 == "change_picture")
+        {
+            $id                  = $this->session->userdata('user_id');
+            $this->crud_model->file_up('img','user',$id,'','','.jpg');  
+            echo 'done';
+        } else {
+            $this->load->view('front/registration', $page_data);
+        }
+    }
+    
+
 	}

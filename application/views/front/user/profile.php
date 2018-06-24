@@ -68,7 +68,7 @@
                 <strong><i class="fa fa-book mr-1"></i> Education</strong>
 
                 <p class="text-muted">
-                  B.S. in Computer Science from the University of Tennessee at Knoxville
+                  <?php echo $row['education']; ?>
                 </p>
 
                 <hr>
@@ -79,17 +79,6 @@
 
                 <hr>
 
-                <strong><i class="fa fa-pencil mr-1"></i> Skills</strong>
-
-                <p class="text-muted">
-                  <span class="tag tag-danger">UI Design</span>
-                  <span class="tag tag-success">Coding</span>
-                  <span class="tag tag-info">Javascript</span>
-                  <span class="tag tag-warning">PHP</span>
-                  <span class="tag tag-primary">Node.js</span>
-                </p>
-
-                <hr>
 
                 <strong><i class="fa fa-file-text-o mr-1"></i> Notes</strong>
 
@@ -106,7 +95,7 @@
                 <ul class="nav nav-pills">
                   
                   
-                  <li class="nav-item"><a class="nav-lin " href="#settings" data-toggle="tab">Profile</a></li>
+                  <li class="nav-item"><a class="nav-lin " href="#activity" data-toggle="tab">Profile</a></li>
                 </ul>
               </div><!-- /.card-header -->
               <div class="card-body">
@@ -116,62 +105,69 @@
                 
                   <!-- /.tab-pane -->
 
-                  <div class="tab-pane" id="settings">
-                    <form class="form-horizontal">
+                  <div class=" active tab-pane" id="activity">
+                    <form class="form-horizontal" id="profileUpdate" method="post" action="<?php echo base_url()?>/home/registration/update_info">
                       <div class="form-group">
                         <label for="first_name" class="col-sm-2 control-label">First Name</label>
 
                         <div class="col-sm-10">
-                          <input class="form-control" id="first_name" value="<?php echo $row['first_name'];?>" placeholder="Input First Name" type="text">
+                          <input class="form-control" name="first_name" id="first_name" value="<?php echo $row['first_name'];?>" placeholder="Input First Name" type="text">
                         </div>
                       </div>
                       <div class="form-group">
                         <label for="last_name" class="col-sm-2 control-label">Last Name</label>
 
                         <div class="col-sm-10">
-                          <input class="form-control" value="<?php echo $row['last_name'];?>" id="inputName2" placeholder="Input Last Name" type="text">
+                          <input class="form-control" name="last_name" value="<?php echo $row['last_name'];?>" id="inputName2" placeholder="Input Last Name" type="text">
                         </div>
                       </div>
                       <div class="form-group">
                         <label for="inputEmail" class="col-sm-2 control-label">Email</label>
 
                         <div class="col-sm-10">
-                          <input class="form-control" disabled="disabled"  value="<?php echo $row['email'];?>"  id="inputEmail" placeholder="Email" type="email">
+                          <input class="form-control" name="email" disabled="disabled"  value="<?php echo $row['email'];?>"  id="inputEmail" placeholder="Email" type="email">
                         </div>
                       </div>
                       <div class="form-group">
                         <label for="phone class="col-sm-2 control-label">Phone</label>
 
                         <div class="col-sm-10">
-                          <input class="form-control" disabled="disabled" value="<?php echo $row['phone'];?>" id="phone" placeholder="Input Last Name" type="text">
+                          <input class="form-control" name="phone" disabled="disabled" value="<?php echo $row['phone'];?>" id="phone" placeholder="Input Last Name" type="text">
                         </div>
                       </div>
                       <div class="form-group">
                         <label for="inputExperience" class="col-sm-2 control-label">Address</label>
 
                         <div class="col-sm-10">
-                          <textarea class="form-control"  value="<?php echo $row['address_1'];?>" id="inputExperience" placeholder="Experience"></textarea>
+                          <textarea class="form-control" name="Address"  value="<?php echo $row['address_1'];?>" id="inputExperience" placeholder="Experience"></textarea>
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label for="inputqualification" class="col-sm-2 control-label">Educational Qualification</label>
+
+                        <div class="col-sm-10">
+                          <input class="form-control"  name="education"  value="<?php echo $row['education'];?>" id="inputqualification" placeholder="Bsc computer scince " type="text">
                         </div>
                       </div>
                       <div class="form-group">
                         <label for="inputCity" class="col-sm-2 control-label">City</label>
 
                         <div class="col-sm-10">
-                          <input class="form-control"  value="<?php echo $row['city'];?>" id="inputCity" placeholder="City" type="text">
+                          <input class="form-control" name="city"  value="<?php echo $row['city'];?>" id="inputCity" placeholder="City" type="text">
                         </div>
                       </div>
                       <div class="form-group">
                         <label for="inputState" class="col-sm-2 control-label">State</label>
 
                         <div class="col-sm-10">
-                          <input class="form-control"  value="<?php echo $row['state'];?>" id="inputState" placeholder="State" type="text">
+                          <input class="form-control" name ="state"  value="<?php echo $row['state'];?>" id="inputState" placeholder="State" type="text">
                         </div>
                       </div>
                       <div class="form-group">
                         <label for="inputState" class="col-sm-2 control-label">Country</label>
 
                         <div class="col-sm-10">
-                          <input class="form-control"  value="<?php echo $row['country'];?>" id="inputCountry" placeholder="Country" type="text">
+                          <input class="form-control" name ="country"  value="<?php echo $row['country'];?>" id="inputCountry" placeholder="Country" type="text">
                         </div>
                       </div>
                       <div class="form-group">

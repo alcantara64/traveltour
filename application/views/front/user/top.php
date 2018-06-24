@@ -1,4 +1,9 @@
 <!DOCTYPE html>
+<?php $current_tour_id = $this->Crud_model->get_current_tour_id();
+       $current_user_id = $this->session->userdata('user_id');
+       
+?>
+
 <html>
 <head>
   <meta charset="utf-8">

@@ -43,40 +43,37 @@
               <div class="card-body table-responsive p-0">
                 <table class="table table-hover">
                   <tbody><tr>
-                    <th>ID</th>
-                    <th>User</th>
-                    <th>Date</th>
-                    <th>Status</th>
-                    <th>Reason</th>
+                    <th>S/N</th>
+                    <th>Tour Name</th>
+                    <th>Tour status</th>
+                    <th>Date paid</th>
+                    <th>Tour description</th>
                   </tr>
+                  <?php 
+                   $i = 1;
+                  foreach($user_info as $row ){?>
                   <tr>
-                    <td>183</td>
-                    <td>John Doe</td>
-                    <td>11-7-2014</td>
-                    <td><span class="tag tag-success">Approved</span></td>
+                    <td><?php echo $i;?></td>
+                    <td><?php echo $this->Crud_model->get_type_name_by_id('tour',$row['tour_id'],'title');; ?></td>
+                    <td><?php $status = $this->Crud_model->get_type_name_by_id('tour',$row['tour_id'],'status');
+                     if($status ==0){
+                      $display = "stopped";
+                    }
+                     elseif($status ==1)
+                     {
+                      $display = "running";
+                     }
+                     else{
+                      $display = "not available";
+                     }
+                     echo $display;
+                    ?></td>
+                    <td><span class="tag tag-success"><?php echo $this->db->get_where('subscription',array('user_id' => $row['user_id']))->row()->timestamp;
+                    
+                    ?></span></td>
                     <td>Bacon ipsum dolor sit amet salami venison chicken flank fatback doner.</td>
                   </tr>
-                  <tr>
-                    <td>219</td>
-                    <td>Alexander Pierce</td>
-                    <td>11-7-2014</td>
-                    <td><span class="tag tag-warning">Pending</span></td>
-                    <td>Bacon ipsum dolor sit amet salami venison chicken flank fatback doner.</td>
-                  </tr>
-                  <tr>
-                    <td>657</td>
-                    <td>Bob Doe</td>
-                    <td>11-7-2014</td>
-                    <td><span class="tag tag-primary">Approved</span></td>
-                    <td>Bacon ipsum dolor sit amet salami venison chicken flank fatback doner.</td>
-                  </tr>
-                  <tr>
-                    <td>175</td>
-                    <td>Mike Doe</td>
-                    <td>11-7-2014</td>
-                    <td><span class="tag tag-danger">Denied</span></td>
-                    <td>Bacon ipsum dolor sit amet salami venison chicken flank fatback doner.</td>
-                  </tr>
+                  <?php $i++; } ?>
                 </tbody></table>
               </div>
               <!-- /.card-body -->
